@@ -9,7 +9,7 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(null)
 
         val textView = findViewById<TextView>(R.id.textView)
         Firebase.auth.signInWithEmailAndPassword("hansung@gmail.com", "hansu1ng")
