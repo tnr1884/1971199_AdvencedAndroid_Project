@@ -7,8 +7,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +29,20 @@ class MainActivity : AppCompatActivity() {
                 else {
                     textView.text = "sign-in fail"
                 }
+            }
+
+        val remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 1 // For test purpose only, 3600 seconds for production
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.setDefaultsAsync(R.xml.remote_config)
+
+        val textView2 = findViewById<TextView>(R.id.textView2)
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener(this) { // it: task
+                val test = remoteConfig.getBoolean("test")
+                textView2.text="${test}"
             }
     }
 
