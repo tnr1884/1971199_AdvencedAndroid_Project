@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "114911047777",
+    "project_id": "prac-ebd62",
+    "storage_bucket": "prac-ebd62.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114911047777:android:b80e530b4e991ed5137a20",
+        "android_client_info": {
+          "package_name": "com.example.week9"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY57fYVtmiyshyrRa-jhvt4MlUkIRYzCw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
