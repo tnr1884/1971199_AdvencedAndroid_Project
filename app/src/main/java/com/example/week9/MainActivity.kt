@@ -1,10 +1,13 @@
 package com.example.week9
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -18,7 +21,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val textView = findViewById<TextView>(R.id.textView)
+
+        if (Firebase.auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+        findViewById<TextView>(R.id.textView)?.text = Firebase.auth.currentUser?.uid ?: "No User"
+
+        findViewById<Button>(R.id.signout).setOnClickListener {
+            Firebase.auth.signOut()
+            Toast.makeText(this, "sign out", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+        displayImage()
+        /*val textView = findViewById<TextView>(R.id.textView)
         Firebase.auth.signInWithEmailAndPassword("hansung@gmail.com", "hansung")
             .addOnCompleteListener(this) {
                 if(it.isSuccessful) {
@@ -29,9 +45,9 @@ class MainActivity : AppCompatActivity() {
                 else {
                     textView.text = "sign-in fail"
                 }
-            }
+            }*/
 
-        val remoteConfig = Firebase.remoteConfig
+        /*val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
             minimumFetchIntervalInSeconds = 1 // For test purpose only, 3600 seconds for production
         }
@@ -43,7 +59,12 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { // it: task
                 val test = remoteConfig.getBoolean("test")
                 textView2.text="${test}"
-            }
+            }*/
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Firebase.auth.signOut()
     }
 
     fun displayImage() {
