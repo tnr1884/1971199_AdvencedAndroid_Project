@@ -52,6 +52,12 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-config-ktx")
+    implementation("com.google.firebase:firebase-inappmessaging-display-ktx")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    val workVersion = "2.8.1"
+    implementation("androidx.work:work-runtime:$workVersion")
+    implementation("androidx.work:work-runtime-ktx:$workVersion")
+
 
 
 }

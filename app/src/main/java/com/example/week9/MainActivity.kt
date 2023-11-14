@@ -4,82 +4,101 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var scope: CoroutineScope
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        Firebase.auth.signInWithEmailAndPassword("hansung@gmail.com", "hansung").addOnCompleteListener(this) {
+            if (it.isSuccessful) {
+                Toast.makeText(this, Firebase.auth.currentUser?.uid ?: "no user", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                println("fail")
+            }
+        }
         if (Firebase.auth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
-        findViewById<TextView>(R.id.textView)?.text = Firebase.auth.currentUser?.uid ?: "No User"
+        //findViewById<TextView>(R.id.textView)?.text = Firebase.auth.currentUser?.uid ?: "No User"
 
-        findViewById<Button>(R.id.signout).setOnClickListener {
-            Firebase.auth.signOut()
-            Toast.makeText(this, "sign out", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, LoginActivity::class.java))
+        val viewModel by viewModels<MyViewModel>()
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+
+        viewModel.addItem(Item("gs://prac-ebd62.appspot.com/대한민국_대통령기.png", "sdf", "sdf"))
+        viewModel.addItem(Item("gs://prac-ebd62.appspot.com/문장.png", "sdf23", "123"))
+        viewModel.addItem(Item("gs://prac-ebd62.appspot.com/문장.png", "sdf23", "123"))
+
+
+        val imageRef = Firebase.storage.getReferenceFromUrl("gs://prac-ebd62.appspot.com/문장.png")
+        displayImage(imageRef, findViewById<ImageView>(R.id.imageView))
+
+        val adapter = CustomAdapter(viewModel)
+        recyclerView.adapter=adapter
+        recyclerView.layoutManager=LinearLayoutManager(this)
+        recyclerView.setHasFixedSize(true)
+
+
+        findViewById<FloatingActionButton>(R.id.floatingActionButton)?.setOnClickListener {
+
+            ItemDialog().show(supportFragmentManager, "")
         }
-        displayImage()
-        /*val textView = findViewById<TextView>(R.id.textView)
-        Firebase.auth.signInWithEmailAndPassword("hansung@gmail.com", "hansung")
-            .addOnCompleteListener(this) {
-                if(it.isSuccessful) {
-                    textView.text = "sign-in success ${Firebase.auth.currentUser?.uid}"
-                    displayImage()
+        viewModel.itemClickEvent.observe(this) {
+            val item = viewModel.items[it]
+            adapter.notifyItemChanged(it)
 
-                }
-                else {
-                    textView.text = "sign-in fail"
-                }
-            }*/
-
-        /*val remoteConfig = Firebase.remoteConfig
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 1 // For test purpose only, 3600 seconds for production
         }
-        remoteConfig.setConfigSettingsAsync(configSettings)
-        remoteConfig.setDefaultsAsync(R.xml.remote_config)
+        refreshProductPicture(adapter)
 
-        val textView2 = findViewById<TextView>(R.id.textView2)
-        remoteConfig.fetchAndActivate()
-            .addOnCompleteListener(this) { // it: task
-                val test = remoteConfig.getBoolean("test")
-                textView2.text="${test}"
-            }*/
+    }
+    private fun refreshProductPicture(adapter: CustomAdapter) {
+        scope = CoroutineScope(Dispatchers.Default).apply { // 코루틴 컨텍스트(디스패처만 지정함)로 코루틴범위 생성
+            launch { // 코루틴범위 객체의 메소드 launch를 사용하여 코루틴 생성
+                delay(2000) // 1000 ms 대기
+                withContext(Dispatchers.Main) { // runOnUiThread 대신 코루틴으로 사용
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
         Firebase.auth.signOut()
     }
-
-    fun displayImage() {
-        val storageRef = Firebase.storage.reference // reference to root
-        //val imageRef1 = storageRef.child("images/computer_sangsangbugi.jpg")
-        val imageRef = Firebase.storage.getReferenceFromUrl(
-            "gs://prac-ebd62.appspot.com/대한민국_대통령기.png"
-        )
-        val view = findViewById<ImageView>(R.id.imageView)
+    private fun displayImage(imageRef: StorageReference?, view: ImageView) {
         imageRef?.getBytes(Long.MAX_VALUE)?.addOnSuccessListener {
             val bmp = BitmapFactory.decodeByteArray(it, 0, it.size)
             view.setImageBitmap(bmp)
         }?.addOnFailureListener {
 // Failed to download the image
         }
-
     }
+
 }
