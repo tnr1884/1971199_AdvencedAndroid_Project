@@ -80,9 +80,11 @@ class MainActivity : AppCompatActivity() {
     private fun refreshProductPicture(adapter: CustomAdapter) {
         scope = CoroutineScope(Dispatchers.Default).apply { // 코루틴 컨텍스트(디스패처만 지정함)로 코루틴범위 생성
             launch { // 코루틴범위 객체의 메소드 launch를 사용하여 코루틴 생성
-                delay(2000) // 1000 ms 대기
-                withContext(Dispatchers.Main) { // runOnUiThread 대신 코루틴으로 사용
-                    adapter.notifyDataSetChanged()
+                while(true) {
+                    delay(3000) // 1000 ms 대기
+                    withContext(Dispatchers.Main) { // runOnUiThread 대신 코루틴으로 사용
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
