@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         val viewModel by viewModels<MyViewModel>()
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        val adapter = CustomAdapter(viewModel)
+        val adapter = CustomAdapter(viewModel, this)
 
         /*itemsCollectionRef.document("book").get().addOnSuccessListener {
             val img = "gs://prac-ebd62.appspot.com/대한민국_대통령기.png"
@@ -120,10 +120,18 @@ class MainActivity : AppCompatActivity() {
                 updateDialog(adapter, viewModel, it, item).show(supportFragmentManager, "")
             }
             else {
-                Toast.makeText(this, "내가 등록한 상품이 아닙니다.", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "내가 등록한 상품이 아닙니다.", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, DetailActivity::class.java)
+                intent.putExtra("title", item.title)
+                intent.putExtra("name", item.name)
+                intent.putExtra("price", item.price)
+                intent.putExtra("isSelled", item.isSelled)
+                intent.putExtra("seller", item.seller)
+                startActivity(intent)
+
             }
         }
-        //refreshProductPicture(adapter)
+
 
 
 

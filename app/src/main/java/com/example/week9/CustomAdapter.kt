@@ -1,19 +1,23 @@
 package com.example.week9
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 
-class CustomAdapter(private val viewModel : MyViewModel) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+class CustomAdapter(private val viewModel : MyViewModel, private val context: Context) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
     private val storage = Firebase.storage
     inner class ViewHolder(private val view : View) : RecyclerView.ViewHolder(view) {
 
@@ -45,7 +49,7 @@ class CustomAdapter(private val viewModel : MyViewModel) : RecyclerView.Adapter<
 
         val url = viewModel.items[position].imageUrl
         //println(url)
-        //val imageRef = storage.getReferenceFromUrl(url)
+        val imageRef = storage.getReferenceFromUrl(url)
         /*Fatal Exception: java.lang.IllegalArgumentException
                 location must not be null or empty*/
 
@@ -62,7 +66,16 @@ class CustomAdapter(private val viewModel : MyViewModel) : RecyclerView.Adapter<
             isSelled.setTextColor(Color.parseColor("#0000FF"))
             isSelled.text="판매 완료"
         }
-        //displayImage(imageRef, image)
+        displayImage(imageRef, image)
+
+        /*view.findViewById<Button>(R.id.productdetail).setOnClickListener {
+            val intent = Intent(context, DetailActivity::class.java)
+            intent.putExtra("title", viewModel.items[position].title)
+            intent.putExtra("name", viewModel.items[position].name)
+            intent.putExtra("price", viewModel.items[position].price)
+            intent.putExtra("name", viewModel.items[position].name)
+            context.startActivity(intent)
+        }*/
 
 
     }

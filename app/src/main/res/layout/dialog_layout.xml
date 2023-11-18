@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:text="상품의 이름을 입력하세요."
+            android:text="상품의 이름/내용을 입력하세요."
             android:textAlignment="center" />
 
         <EditText
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="text"
-            android:text="상품이름" />
+            android:text="상품상세이름/내용" />
 
         <TextView
             android:id="@+id/textView14"
@@ -67,7 +67,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="number" />
+            android:inputType="number"
+            android:text="0" />
 
         <Button
             android:id="@+id/productregisterbutton"
