@@ -17,64 +17,61 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:fontFamily="sans-serif-thin"
-            android:text="판매 물품 등록"
+            android:text="판매 물품 수정"
             android:textAlignment="center"
 
             android:textSize="34sp" />
-
-        <TextView
-            android:id="@+id/textView33"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="게시글 제목을 입력하세요."
-            android:textAlignment="center" />
-
-        <EditText
-            android:id="@+id/edittitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="글 제목" />
-
-        <TextView
-            android:id="@+id/textView13"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="상품의 이름을 입력하세요."
-            android:textAlignment="center" />
-
-        <EditText
-            android:id="@+id/editname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="상품이름" />
 
         <TextView
             android:id="@+id/textView14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:text="상품의 가격을 입력하세요."
+            android:text="물품의 가격을 수정하세요. (단위 : 원)"
             android:textAlignment="center" />
 
         <EditText
-            android:id="@+id/productprice"
+            android:id="@+id/updateprice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="number" />
+            android:inputType="number"
+            android:text="0" />
 
-        <Button
-            android:id="@+id/productregisterbutton"
+        <TextView
+            android:id="@+id/textView9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"
-            android:text="register" />
+            android:text="물품의 판매여부를 수정하세요."
+            android:layout_marginTop="25dp"
+            android:textAlignment="center" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioselling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="판매 중" />
+
+            <RadioButton
+                android:id="@+id/radioselled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="판매 완료" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/productupdatebutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="update" />
 
     </LinearLayout>
 </FrameLayout>

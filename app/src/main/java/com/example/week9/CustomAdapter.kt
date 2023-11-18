@@ -1,12 +1,13 @@
 package com.example.week9
 
+import android.content.res.ColorStateList
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -35,17 +36,34 @@ class CustomAdapter(private val viewModel : MyViewModel) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val view = holder.itemView
-        val text1 = view.findViewById<TextView>(R.id.textView1)
-        val text2 = view.findViewById<TextView>(R.id.textView2)
+        val productTitle = view.findViewById<TextView>(R.id.producttitle)
+        val isSelled = view.findViewById<TextView>(R.id.isSelled)
         val image = view.findViewById<ImageView>(R.id.imageView2)
+        val name = view.findViewById<TextView>(R.id.name)
+        val price = view.findViewById<TextView>(R.id.price)
+        val seller = view.findViewById<TextView>(R.id.seller)
 
         val url = viewModel.items[position].imageUrl
         //println(url)
-        val imageRef = storage.getReferenceFromUrl(url)
-        displayImage(imageRef, image)
+        //val imageRef = storage.getReferenceFromUrl(url)
+        /*Fatal Exception: java.lang.IllegalArgumentException
+                location must not be null or empty*/
 
-        text1.text = viewModel.items[position].firstName
-        text2.text = viewModel.items[position].lastName
+
+        productTitle.text = viewModel.items[position].title
+        price.text = viewModel.items[position].price.toString() + " 원"
+        name.text=viewModel.items[position].name
+        seller.text=viewModel.items[position].seller
+        if (viewModel.items[position].isSelled) {
+            isSelled.setTextColor(Color.parseColor("#FF0000"))
+            isSelled.text="판매 중"
+        }
+        else{
+            isSelled.setTextColor(Color.parseColor("#0000FF"))
+            isSelled.text="판매 완료"
+        }
+        //displayImage(imageRef, image)
+
 
     }
     private fun displayImage(imageRef: StorageReference?, view: ImageView) {
@@ -54,7 +72,8 @@ class CustomAdapter(private val viewModel : MyViewModel) : RecyclerView.Adapter<
             view.setImageBitmap(bmp)
         }?.addOnFailureListener {
 // Failed to download the image
-            println("failed image")
+            exception -> println("실패 : $exception")
         }
     }
+
 }

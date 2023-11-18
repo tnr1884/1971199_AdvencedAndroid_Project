@@ -4,7 +4,7 @@ import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-data class Item(val imageUrl : String, val firstName: String, val lastName: String)
+data class Item(val imageUrl : String, val title: String, val name: String, var price : Int, var isSelled : Boolean, val seller : String, val id : String)
 class MyViewModel : ViewModel() {
     val itemsListData = MutableLiveData<ArrayList<Item>>()
     val items = ArrayList<Item>()
@@ -22,4 +22,5 @@ class MyViewModel : ViewModel() {
         items.removeAt(pos)
         itemsListData.value = items
     }
+
 }
