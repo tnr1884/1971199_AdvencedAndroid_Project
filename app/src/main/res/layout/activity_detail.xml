@@ -119,12 +119,22 @@
         app:layout_constraintStart_toEndOf="@+id/textView16" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/messagebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Message"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/backproductlistbutton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detailseller" />
+
+    <Button
+        android:id="@+id/backproductlistbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="목록으로 돌아가기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,9 @@
 package com.example.week9
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 
 class DetailActivity : AppCompatActivity() {
@@ -24,6 +26,10 @@ class DetailActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.detailisSelled).text= "판매 완료"
         }
         findViewById<TextView>(R.id.detailtitle).text=title
+
+        findViewById<Button>(R.id.backproductlistbutton).setOnClickListener {
+            finish()
+        }
     }
 }
 

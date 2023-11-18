@@ -22,5 +22,9 @@ class MyViewModel : ViewModel() {
         items.removeAt(pos)
         itemsListData.value = items
     }
+    fun clear() {
+        items.clear()
+    }
+
 
 }

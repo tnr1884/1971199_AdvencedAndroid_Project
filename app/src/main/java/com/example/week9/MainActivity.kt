@@ -1,30 +1,24 @@
 package com.example.week9
 
-import android.content.ContentValues.TAG
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.play.integrity.internal.t
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +26,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
     private lateinit var scope: CoroutineScope
@@ -46,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         /*Firebase.auth.signInWithEmailAndPassword("hansung@gmail.com", "hansung").addOnCompleteListener(this) {
             if (it.isSuccessful) {
-                Toast.makeText(this, user, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "hi", Toast.LENGTH_SHORT).show()
             }
             else {
                 println("fail")
@@ -63,37 +56,7 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         val adapter = CustomAdapter(viewModel, this)
 
-        /*itemsCollectionRef.document("book").get().addOnSuccessListener {
-            val img = "gs://prac-ebd62.appspot.com/대한민국_대통령기.png"
-            val name = it["name"].toString()
-            val title = it["title"].toString()
-            val price = it["price"].toString()
-            viewModel.addItem(Item(img,title,name,price.toInt(),true))
-            adapter.notifyDataSetChanged()
-        }.addOnFailureListener {
-            exception -> println("실패 : $exception")
-        }*/
-        itemsCollectionRef.get().addOnSuccessListener {
-            for(doc in it) {
-                viewModel.addItem(
-                    Item(
-                        doc["imageUrl"].toString(),
-                        doc["title"].toString(),
-                        doc["name"].toString(),
-                        doc["price"].toString().toInt(),
-                        doc["isSelled"].toString().toBoolean(),
-                        doc["seller"].toString(),
-                        doc.id
-                    )
-                )
-                adapter.notifyDataSetChanged()
-
-            }
-        }.addOnFailureListener {
-                exception -> println("실패 : $exception")
-        }
-        //viewModel.addItem(Item("gs://prac-ebd62.appspot.com/대한민국_대통령기.png", "sdf", "sdf", 156, true))
-
+        addItemListinViewModel(viewModel, adapter)
 
         val imageRef = Firebase.storage.getReferenceFromUrl("gs://prac-ebd62.appspot.com/문장.png")
         displayImage(imageRef, findViewById<ImageView>(R.id.imageView))
@@ -104,11 +67,43 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
 
 
-        findViewById<FloatingActionButton>(R.id.floatingActionButton)?.setOnClickListener {
-            println(Firebase.auth.currentUser?.email ?: "no user")
+        findViewById<Button>(R.id.fillterbutton)?.setOnClickListener {
+            var checkedItemPosition = 0
+            val array = arrayOf("모두", "판매 중", "판매 완료")
+            AlertDialog.Builder(this)
+                .setTitle("radio")
+                .setSingleChoiceItems(array, checkedItemPosition, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface, which: Int) {
+                        Log.d("MyTag", "which : $which")
+                        checkedItemPosition = which
+                        println(checkedItemPosition)
+                    }
+                })
+                .setPositiveButton("ok", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        //Log.d("MyTag", "checkedItemPosition : $checkedItemPosition")
+                        when(checkedItemPosition) {
+                            0 -> {
+                                viewModel.clear()
+                                addItemListinViewModel(viewModel, adapter)
+                                adapter.notifyDataSetChanged()
+                            }
+                            1 -> {
+                                fillterbyisSelled(viewModel, adapter, true)
+                            }
+                            2 -> {
+                                fillterbyisSelled(viewModel, adapter, false)
+                            }
+                        }
+                    }
+                })
+                .show()
         }
-
-
+        findViewById<Button>(R.id.signoutbutton).setOnClickListener {
+            Firebase.auth.signOut()
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+        //상품 등록
         findViewById<Button>(R.id.buttonRegister)?.setOnClickListener {
             ItemDialog(adapter, viewModel).show(supportFragmentManager, "")
         }
@@ -150,13 +145,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        /*itemsCollectionRef.document("2DKGIZj2TGFrXnXBF1JM").addSnapshotListener { snapshot, error ->
-            Log.d(TAG, "${snapshot?.id} ${snapshot?.data}")
-        }*/
-        //Firebase.auth.signOut()
-    }
     private fun displayImage(imageRef: StorageReference?, view: ImageView) {
         imageRef?.getBytes(Long.MAX_VALUE)?.addOnSuccessListener {
             val bmp = BitmapFactory.decodeByteArray(it, 0, it.size)
@@ -166,5 +154,46 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun addItemListinViewModel(viewModel: MyViewModel, adapter: CustomAdapter) {
+        itemsCollectionRef.get().addOnSuccessListener {
+            for(doc in it) {
+                viewModel.addItem(
+                    Item(
+                        doc["imageUrl"].toString(),
+                        doc["title"].toString(),
+                        doc["name"].toString(),
+                        doc["price"].toString().toInt(),
+                        doc["isSelled"].toString().toBoolean(),
+                        doc["seller"].toString(),
+                        doc.id
+                    )
+                )
+                adapter.notifyDataSetChanged()
+
+            }
+        }.addOnFailureListener {
+                exception -> println("실패 : $exception")
+        }
+    }
+    private fun fillterbyisSelled(viewModel : MyViewModel, adapter: CustomAdapter, type : Boolean) {
+        viewModel.clear()
+        itemsCollectionRef.whereEqualTo("isSelled", type).get().addOnSuccessListener {
+            for (doc in it) {
+                viewModel.addItem(Item("gs://prac-ebd62.appspot.com/대한민국_대통령기.png", "${doc["title"]}", "${doc["name"]}", "${doc["price"]}".toInt(), type, "${doc["seller"]}", doc.id))
+                adapter.notifyDataSetChanged()
+            }
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Firebase.auth.signOut()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Firebase.auth.signOut()
+    }
 
 }
