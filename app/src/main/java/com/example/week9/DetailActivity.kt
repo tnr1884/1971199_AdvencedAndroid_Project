@@ -26,6 +26,7 @@ class DetailActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.detailisSelled).text= "판매 완료"
         }
         findViewById<TextView>(R.id.detailtitle).text=title
+        findViewById<TextView>(R.id.detailseller).text=seller
 
         findViewById<Button>(R.id.backproductlistbutton).setOnClickListener {
             finish()

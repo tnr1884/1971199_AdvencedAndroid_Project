@@ -186,14 +186,4 @@ class MainActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
-    override fun onStop() {
-        super.onStop()
-        Firebase.auth.signOut()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Firebase.auth.signOut()
-    }
-
 }

@@ -28,6 +28,7 @@ class updateDialog(private val adapter: CustomAdapter, private val viewModel: My
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         view.findViewById<EditText>(R.id.updateprice).setText(viewModel.items[pos].price.toString())
 
 
