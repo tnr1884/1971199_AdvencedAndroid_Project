@@ -17,7 +17,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 
-class CustomAdapter(private val viewModel : MyViewModel, private val context: Context) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+class CustomAdapter(private val viewModel : MyViewModel) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
     private val storage = Firebase.storage
     inner class ViewHolder(private val view : View) : RecyclerView.ViewHolder(view) {
 
@@ -48,11 +48,7 @@ class CustomAdapter(private val viewModel : MyViewModel, private val context: Co
         val seller = view.findViewById<TextView>(R.id.seller)
 
         val url = viewModel.items[position].imageUrl
-        //println(url)
         val imageRef = storage.getReferenceFromUrl(url)
-        /*Fatal Exception: java.lang.IllegalArgumentException
-                location must not be null or empty*/
-
 
         productTitle.text = viewModel.items[position].title
         price.text = viewModel.items[position].price.toString() + " 원"

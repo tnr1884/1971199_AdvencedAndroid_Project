@@ -9,12 +9,11 @@ import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class updateDialog(private val adapter: CustomAdapter, private val viewModel: MyViewModel, private val pos : Int, private val item: Item) : DialogFragment() {
+class UpdateDialog(private val adapter: CustomAdapter, private val viewModel: MyViewModel, private val pos : Int, private val item: Item) : DialogFragment() {
     private val db : FirebaseFirestore = Firebase.firestore
     private val itemsCollectionRef = db.collection("product")
     override fun onCreateView(
@@ -44,20 +43,20 @@ class updateDialog(private val adapter: CustomAdapter, private val viewModel: My
             println(status)
             itemsCollectionRef.document(item.id).update("isSelled", status).addOnSuccessListener {
                 viewModel.items[pos].isSelled=status
-                adapter.notifyDataSetChanged()
+                itemsCollectionRef.document(item.id).update("price", price).addOnSuccessListener {
+                    viewModel.items[pos].price=price
+                    adapter.notifyItemChanged(pos)
+
+                }
+                adapter.notifyItemChanged(pos)
                 println(status)
-                dismiss()
-            }
-
-            itemsCollectionRef.document(item.id).update("price", price).addOnSuccessListener {
-                viewModel.items[pos].price=price
-
-                adapter.notifyDataSetChanged()
-
-                println ("good")
                 Toast.makeText(activity, "수정되었습니다.", Toast.LENGTH_SHORT).show()
                 dismiss()
+
             }
+
+
+
 
         }
 

@@ -1,8 +1,13 @@
 package com.example.week9
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +15,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,13 +33,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.Manifest
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 
 class MainActivity : AppCompatActivity() {
     private lateinit var scope: CoroutineScope
 
     private var db : FirebaseFirestore = Firebase.firestore
     private val itemsCollectionRef = db.collection("product")
-    val count=0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -53,8 +64,9 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.user)?.text = Firebase.auth.currentUser?.email ?: "No User"
 
         val viewModel by viewModels<MyViewModel>()
+        //val messageViewModel by viewModels<MessageViewModel>()
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        val adapter = CustomAdapter(viewModel, this)
+        val adapter = CustomAdapter(viewModel)
 
         addItemListinViewModel(viewModel, adapter)
 
@@ -71,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             var checkedItemPosition = 0
             val array = arrayOf("모두", "판매 중", "판매 완료")
             AlertDialog.Builder(this)
-                .setTitle("radio")
+                .setTitle("판매 여부")
                 .setSingleChoiceItems(array, checkedItemPosition, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface, which: Int) {
                         Log.d("MyTag", "which : $which")
@@ -108,11 +120,17 @@ class MainActivity : AppCompatActivity() {
             ItemDialog(adapter, viewModel).show(supportFragmentManager, "")
         }
 
+        findViewById<Button>(R.id.receivedmessagebutton).setOnClickListener {
+            /*var intent = Intent(this, ReceivedMessageActivity::class.java)
+            startActivity(intent)*/
+            ReceivedMessageDialog().show(supportFragmentManager, "")
+        }
+
         viewModel.itemClickEvent.observe(this) {
             val item = viewModel.items[it]
 
             if (item.seller==Firebase.auth.currentUser?.email ?: "no user") {
-                updateDialog(adapter, viewModel, it, item).show(supportFragmentManager, "")
+                UpdateDialog(adapter, viewModel, it, item).show(supportFragmentManager, "")
             }
             else {
                 //Toast.makeText(this, "내가 등록한 상품이 아닙니다.", Toast.LENGTH_SHORT).show()
@@ -127,7 +145,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestSinglePermission(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // Android 8.0
+            createNotificationChannel()
+        }
 
 
     }
@@ -184,6 +208,42 @@ class MainActivity : AppCompatActivity() {
             }
         }
         adapter.notifyDataSetChanged()
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(
+            "firebase-messaging", "firebase-messaging channel",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        channel.description = "This is firebase-messaging channel."
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+    private fun requestSinglePermission(permission: String) {
+        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED)
+            return
+
+        val requestPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it == false) { // permission is not granted!
+                AlertDialog.Builder(this).apply {
+                    setTitle("Warning")
+                    setMessage("notification permission required!")
+                }.show()
+            }
+        }
+
+        if (shouldShowRequestPermissionRationale(permission)) {
+            // you should explain the reason why this app needs the permission.
+            AlertDialog.Builder(this).apply {
+                setTitle("Reason")
+                setMessage("notification permission required!")
+                setPositiveButton("Allow") { _, _ -> requestPermLauncher.launch(permission) }
+                setNegativeButton("Deny") { _, _ -> }
+            }.show()
+        } else {
+            // should be called in onCreate()
+            requestPermLauncher.launch(permission)
+        }
     }
 
 }

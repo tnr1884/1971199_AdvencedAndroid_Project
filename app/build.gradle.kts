@@ -55,6 +55,8 @@ dependencies {
     implementation("com.google.firebase:firebase-inappmessaging-display-ktx")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
 
     val workVersion = "2.8.1"
     implementation("androidx.work:work-runtime:$workVersion")

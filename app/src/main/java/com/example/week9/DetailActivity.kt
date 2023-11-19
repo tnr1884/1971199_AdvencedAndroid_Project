@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +32,10 @@ class DetailActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.backproductlistbutton).setOnClickListener {
             finish()
+        }
+        findViewById<Button>(R.id.messagebutton).setOnClickListener {
+            if (seller!=null)
+                MessageDialog(seller).show(supportFragmentManager, "")
         }
     }
 }
