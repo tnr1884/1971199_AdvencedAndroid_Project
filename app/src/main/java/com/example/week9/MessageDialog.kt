@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -49,7 +50,8 @@ class MessageDialog(private var seller: String) : DialogFragment() {
                 "message" to message.text.toString()
             )
             itemsCollectionRef.add(itemMap).addOnSuccessListener {
-                println("gg")
+                Toast.makeText(activity, "메세지가 전송되었습니다.", Toast.LENGTH_SHORT).show()
+                dismiss()
 
             }.addOnFailureListener {
                 Log.d(ContentValues.TAG, it.toString())
