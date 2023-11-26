@@ -2,6 +2,7 @@ package com.example.week9
 
 import android.app.Dialog
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -51,7 +52,8 @@ class MessageDialog(private var seller: String) : DialogFragment() {
             )
             itemsCollectionRef.add(itemMap).addOnSuccessListener {
                 Toast.makeText(activity, "메세지가 전송되었습니다.", Toast.LENGTH_SHORT).show()
-                dismiss()
+                //dismiss()
+                startActivity(Intent(activity, MainActivity::class.java))
 
             }.addOnFailureListener {
                 Log.d(ContentValues.TAG, it.toString())

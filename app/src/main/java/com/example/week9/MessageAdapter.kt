@@ -37,8 +37,6 @@ class MessageAdapter(private val messageViewModel: MessageViewModel) : RecyclerV
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val view = holder.itemView
-/*        var database = Firebase.database
-        var itemsRef = database.getReference("items")*/
         var messageSender = view.findViewById<TextView>(R.id.messagesender)
         var sendedMessage = view.findViewById<TextView>(R.id.sendedmessage)
 

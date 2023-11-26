@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
-            android:text="메세지는 최대 20자 까지 표시됩니다."
+            android:text="메세지는 최대 40자 까지 표시됩니다."
             app2:layout_constraintBottom_toBottomOf="parent"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toStartOf="parent"

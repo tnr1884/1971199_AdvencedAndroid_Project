@@ -64,16 +64,6 @@ class CustomAdapter(private val viewModel : MyViewModel) : RecyclerView.Adapter<
         }
         displayImage(imageRef, image)
 
-        /*view.findViewById<Button>(R.id.productdetail).setOnClickListener {
-            val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra("title", viewModel.items[position].title)
-            intent.putExtra("name", viewModel.items[position].name)
-            intent.putExtra("price", viewModel.items[position].price)
-            intent.putExtra("name", viewModel.items[position].name)
-            context.startActivity(intent)
-        }*/
-
-
     }
     private fun displayImage(imageRef: StorageReference?, view: ImageView) {
         imageRef?.getBytes(Long.MAX_VALUE)?.addOnSuccessListener {

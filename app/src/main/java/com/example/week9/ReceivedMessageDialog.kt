@@ -39,14 +39,12 @@ class ReceivedMessageDialog() : DialogFragment() {
         val messageViewModel = ViewModelProvider(this)[MessageViewModel::class.java]
         val recyclerView = view.findViewById<RecyclerView>(R.id.messagerecyclerview)
         val adapter = MessageAdapter(messageViewModel)
-        var sender : String
+        /*var sender : String
         var receiver : String
-        var msg :String
+        var msg :String*/
 
         addMessageInViewModel(messageViewModel)
 
-        //messageViewModel.addMessage(Message("hansung@gmail.com", "1971199@hansung.ac.kr", "1234"))
-        //messageViewModel.addMessage(Message("g", "d", "q"))
         itemsCollectionRef.get().addOnSuccessListener {
             for (doc in it) {
                 if (doc["receiver"] == Firebase.auth.currentUser?.email) {

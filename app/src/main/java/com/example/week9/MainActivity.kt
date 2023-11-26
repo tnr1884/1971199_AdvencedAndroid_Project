@@ -48,14 +48,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        /*Firebase.auth.signInWithEmailAndPassword("hansung@gmail.com", "hansung").addOnCompleteListener(this) {
-            if (it.isSuccessful) {
-                Toast.makeText(this, "hi", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                println("fail")
-            }
-        }*/
         if (Firebase.auth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
@@ -64,13 +56,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.user)?.text = Firebase.auth.currentUser?.email ?: "No User"
 
         val viewModel by viewModels<MyViewModel>()
-        //val messageViewModel by viewModels<MessageViewModel>()
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         val adapter = CustomAdapter(viewModel)
 
         addItemListinViewModel(viewModel, adapter)
 
-        val imageRef = Firebase.storage.getReferenceFromUrl("gs://prac-ebd62.appspot.com/문장.png")
+        val imageRef = Firebase.storage.getReferenceFromUrl("gs://prac-ebd62.appspot.com/영문로고.gif")
         displayImage(imageRef, findViewById<ImageView>(R.id.imageView))
 
 
@@ -121,8 +112,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.receivedmessagebutton).setOnClickListener {
-            /*var intent = Intent(this, ReceivedMessageActivity::class.java)
-            startActivity(intent)*/
             ReceivedMessageDialog().show(supportFragmentManager, "")
         }
 
@@ -203,7 +192,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.clear()
         itemsCollectionRef.whereEqualTo("isSelled", type).get().addOnSuccessListener {
             for (doc in it) {
-                viewModel.addItem(Item("gs://prac-ebd62.appspot.com/대한민국_대통령기.png", "${doc["title"]}", "${doc["name"]}", "${doc["price"]}".toInt(), type, "${doc["seller"]}", doc.id))
+                viewModel.addItem(Item("gs://prac-ebd62.appspot.com/국문시그니쳐.jpg", "${doc["title"]}", "${doc["name"]}", "${doc["price"]}".toInt(), type, "${doc["seller"]}", doc.id))
                 adapter.notifyDataSetChanged()
             }
         }

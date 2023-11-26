@@ -26,12 +26,15 @@ class SignupActivity : AppCompatActivity() {
         Firebase.auth.createUserWithEmailAndPassword(userEmail, password)
             .addOnCompleteListener(this) {
                 if (it.isSuccessful) {
-                    Toast.makeText(this, "Register Success!!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, LoginActivity::class.java))
+                    Toast.makeText(this, "계정 생성 완료.", Toast.LENGTH_SHORT).show()
+                    Firebase.auth.signInWithEmailAndPassword(userEmail, password).addOnSuccessListener {
+                        Toast.makeText(this, "생성한 계정으로 로그인합니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
                     Log.w("SignupActivity", "signInWithEmail", it.exception)
-                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "계정 생성 실패", Toast.LENGTH_SHORT).show()
                 }
             }
     }

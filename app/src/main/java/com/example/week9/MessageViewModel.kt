@@ -18,10 +18,6 @@ class MessageViewModel : ViewModel() {
         messages[pos] = message
         messagesListData.value = messages // 옵저버에게 라이브데이터가 변경된 것을 알리기 위해
     }
-    /*fun deleteItem(pos: Int) {
-        items.removeAt(pos)
-        itemsListData.value = items
-    }*/
     fun clear() {
         messages.clear()
     }

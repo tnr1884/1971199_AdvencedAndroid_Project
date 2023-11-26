@@ -32,7 +32,7 @@ class ItemDialog(private val adapter: CustomAdapter, private val viewModel: MyVi
             val price = view.findViewById<EditText>(R.id.productprice).text.toString().toInt()
             val title = view.findViewById<EditText>(R.id.edittitle).text.toString()
             val isSelled = true
-            val imageUrl = "gs://prac-ebd62.appspot.com/대한민국_대통령기.png"
+            val imageUrl = "gs://prac-ebd62.appspot.com/국문시그니쳐.jpg"
             val seller = Firebase.auth.currentUser?.email ?: "no user"
 
             val itemMap = hashMapOf(
@@ -52,8 +52,6 @@ class ItemDialog(private val adapter: CustomAdapter, private val viewModel: MyVi
             }.addOnFailureListener {
                 Log.d(TAG, it.toString())
             }
-            //println(name)
-            //println(price)
         }
 
     }
